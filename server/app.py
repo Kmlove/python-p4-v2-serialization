@@ -20,6 +20,28 @@ def index():
     body = {'message': 'Welcome to the pet directory!'}
     return make_response(body, 200)
 
+@app.route("/pets/<int:id>")
+def pet_by_id(id):
+    pet = Pet.query.filter_by(id=id).first()
+
+    if pet:
+        body = pet.to_dict()
+        status = 200
+    else:
+        body = f"Pet id: {id} not found."
+        status = 404
+
+    return make_response(body, status)
+
+
+@app.route("/species/<string:species>")
+def pet_by_species(species):
+    pets = []
+
+    for pet in Pet.query.filter_by(species=species).all():
+        pets.append(pet.to_dict())
+    
+    return make_response({"pets": pets}, 200)
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
